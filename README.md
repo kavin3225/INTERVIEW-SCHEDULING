@@ -77,3 +77,4 @@ Change via `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` in `.env`.
 ---
 
 Prepared per SRS – Interview Scheduling (KAVIN RAJA M · 7376241EC511).
+"# interview-scheduling-app" 
