@@ -13,7 +13,7 @@ services:
       - key: SQLITE_STORAGE_PATH
         value: /tmp/scheduler.sqlite
       - key: CLIENT_URL
-        sync: false
+        value: https://interview-scheduler-njl7.onrender.com
       - key: JWT_SECRET
         generateValue: true
       - key: ADMIN_EMAIL
