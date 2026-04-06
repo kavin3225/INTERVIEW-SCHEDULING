@@ -5,6 +5,7 @@ import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import Layout from '../components/Layout';
 import { bookingsApi, slotsApi } from '../api/client';
 import { useCountdown } from '../hooks/useCountdown';
+import { getCandidateDisplayLabel } from '../utils/privacy';
 import './Bookings.css';
 
 function SearchFilterBar({ search, onSearch, statusFilter, onStatus, onClear }) {
@@ -85,8 +86,7 @@ export default function Bookings() {
     if (search) {
       const q = search.toLowerCase();
       list = list.filter((b) =>
-        (b.Candidate?.name || '').toLowerCase().includes(q) ||
-        (b.Candidate?.email || '').toLowerCase().includes(q) ||
+        getCandidateDisplayLabel(b.Candidate, user?.role, b.candidateId).toLowerCase().includes(q) ||
         (b.InterviewSlot?.Recruiter?.name || '').toLowerCase().includes(q) ||
         (b.InterviewSlot?.title || '').toLowerCase().includes(q)
       );
@@ -153,6 +153,7 @@ export default function Bookings() {
 
 function BookingCard({ booking, onUpdate, canUpdate, availableSlots }) {
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [resumeLoading, setResumeLoading] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
   const [showReschedule, setShowReschedule] = useState(false);
@@ -199,7 +200,7 @@ function BookingCard({ booking, onUpdate, canUpdate, availableSlots }) {
   const isActive = booking.status === 'scheduled';
   const slotDate = booking.InterviewSlot?.slotDate;
   const date = slotDate ? new Date(`${slotDate}T00:00:00`) : null;
-  const canViewCandidateResume = user?.role === 'admin' || user?.role === 'recruiter';
+  const canViewCandidateResume = user?.role === 'candidate' && booking.candidateId === user?.id;
   const recruiter = booking.InterviewSlot?.Recruiter;
   const rescheduleOptions = (availableSlots || []).filter((slot) => slot.id !== booking.slotId);
   const canUseParticipantChat = user?.role === 'candidate' || user?.role === 'recruiter';
@@ -319,6 +320,18 @@ function BookingCard({ booking, onUpdate, canUpdate, availableSlots }) {
     }
   }
 
+  async function handleDeleteBooking() {
+    setDeleting(true);
+    try {
+      await bookingsApi.delete(booking.id);
+      await onUpdate();
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   const participantMessages = messages.filter((message) => message.visibility === 'participant');
   const adminMessages = messages.filter((message) => message.visibility === 'admin');
   const recentParticipantMessages = useMemo(
@@ -360,7 +373,7 @@ function BookingCard({ booking, onUpdate, canUpdate, availableSlots }) {
           )}
           {(user?.role === 'recruiter' || user?.role === 'admin') && (
             <>
-              <div className="booking-person">Candidate: {booking.Candidate?.name || booking.Candidate?.email}</div>
+              <div className="booking-person">Candidate: {getCandidateDisplayLabel(booking.Candidate, user?.role, booking.candidateId)}</div>
               <div className="booking-person">Recruiter: {recruiter?.name}</div>
             </>
           )}
@@ -401,6 +414,9 @@ function BookingCard({ booking, onUpdate, canUpdate, availableSlots }) {
                   <button className="btn-cancel" onClick={() => setStatus('cancelled')} disabled={loading || rescheduling}>
                     Cancel
                   </button>
+                  <button className="btn-delete-booking" onClick={handleDeleteBooking} disabled={loading || rescheduling || deleting}>
+                    {deleting ? 'Deleting...' : 'Delete'}
+                  </button>
                 </>
               )}
               {(user?.role === 'recruiter' || user?.role === 'admin') && (
@@ -411,8 +427,18 @@ function BookingCard({ booking, onUpdate, canUpdate, availableSlots }) {
                   <button className="btn-cancel" onClick={() => setStatus('cancelled')} disabled={loading}>
                     Cancel
                   </button>
+                  <button className="btn-delete-booking" onClick={handleDeleteBooking} disabled={loading || deleting}>
+                    {deleting ? 'Deleting...' : 'Delete'}
+                  </button>
                 </>
               )}
+            </div>
+          )}
+          {!isActive && (
+            <div className="booking-actions">
+              <button className="btn-delete-booking" onClick={handleDeleteBooking} disabled={deleting}>
+                {deleting ? 'Deleting...' : 'Clear Booking'}
+              </button>
             </div>
           )}
         </div>

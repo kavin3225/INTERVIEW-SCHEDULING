@@ -17,6 +17,7 @@
     "migrate:purpose": "node server/scripts/addPurposeColumn.js",
     "migrate:max-candidates": "node server/scripts/addMaxCandidatesColumn.js",
     "migrate:resume": "node server/scripts/addResumeColumns.js",
+    "migrate:mobile": "node server/scripts/addMobileNumberColumn.js",
     "check-db": "node server/scripts/checkDb.js"
   },
   "dependencies": {

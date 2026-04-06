@@ -87,7 +87,7 @@ export function NotificationsProvider({ children }) {
     };
   }, [socket, add, addToast, user]);
 
-  const unread = notifications.filter((n) => !n.read).length;
+  const unread = notifications.some((n) => !n.read) ? 1 : 0;
 
   return (
     <NotificationsContext.Provider value={{ notifications, unread, add, markAllRead, clear }}>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import VideoBackground from '../components/VideoBackground';
 import WelcomePopup from '../components/WelcomePopup';
+import { getDefaultRouteForRole } from '../utils/roleRoutes';
 import './Auth.css';
 
 export default function Login() {
@@ -36,7 +37,10 @@ export default function Login() {
       <VideoBackground />
 
       {welcomeUser && (
-        <WelcomePopup user={welcomeUser} onClose={() => navigate('/')} />
+        <WelcomePopup
+          user={welcomeUser}
+          onClose={() => navigate(getDefaultRouteForRole(welcomeUser?.role))}
+        />
       )}
 
       <div className="auth-card">
@@ -57,7 +61,7 @@ export default function Login() {
             <input
               type="email"
               name="login_mail"
-              placeholder="Email ID"
+              placeholder="Enter mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setEmailLocked(false)}
@@ -71,7 +75,7 @@ export default function Login() {
             <input
               type="password"
               name="login_password"
-              placeholder="Password"
+              placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onFocus={() => setPasswordLocked(false)}

@@ -52,6 +52,7 @@ export const bookingsApi = {
     body: body instanceof FormData ? body : JSON.stringify(body),
   }),
   updateStatus: (id, status) => api(`/bookings/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  delete: (id) => api(`/bookings/${id}`, { method: 'DELETE' }),
   reschedule: (id, newSlotId) =>
     api(`/bookings/${id}/reschedule`, {
       method: 'PATCH',

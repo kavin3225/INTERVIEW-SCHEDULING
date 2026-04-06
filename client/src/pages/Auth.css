@@ -107,6 +107,12 @@
   z-index: 1;
 }
 
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
 .auth-decoy {
   position: absolute;
   width: 1px;
@@ -139,6 +145,26 @@
   outline: none;
   border-color: rgba(118, 163, 255, 0.75);
   box-shadow: var(--shadow-focus);
+}
+
+.auth-card input[aria-invalid="true"] {
+  border-color: rgba(248, 113, 113, 0.78);
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.18);
+}
+
+.auth-field-hint,
+.auth-field-error {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  padding: 0 0.1rem;
+}
+
+.auth-field-hint {
+  color: rgba(199, 216, 240, 0.72);
+}
+
+.auth-field-error {
+  color: #fecaca;
 }
 
 .auth-textarea {

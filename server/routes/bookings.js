@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const { Op } = require('sequelize');
-const { Booking, InterviewSlot, User, sequelize } = require('../models');
+const { Booking, InterviewSlot, User, BookingMessage, sequelize } = require('../models');
 const { auth, requireRole } = require('../middleware/auth');
 const { sendBookingConfirmation, sendCancellation } = require('../services/emailService');
 const bookingMessagesRoutes = require('./bookingMessages');
@@ -63,6 +63,22 @@ async function getBookingWithRelations(bookingId) {
   });
 }
 
+function sanitizeBookingForViewer(viewer, booking) {
+  if (viewer.role === 'candidate' && booking.candidateId === viewer.id) {
+    return booking;
+  }
+
+  const plain = typeof booking.toJSON === 'function' ? booking.toJSON() : { ...booking };
+  plain.Candidate = {
+    id: plain.candidateId || plain.Candidate?.id || null,
+    name: 'Private Candidate',
+    email: null,
+  };
+  plain.resumeUrl = null;
+  plain.resumeFileName = null;
+  return plain;
+}
+
 function canAccessBooking(user, booking) {
   return user.role === 'admin' ||
     (user.role === 'recruiter' && booking.InterviewSlot?.recruiterId === user.id) ||
@@ -70,8 +86,7 @@ function canAccessBooking(user, booking) {
 }
 
 function canViewCandidateResume(user, booking) {
-  return user.role === 'admin' ||
-    (user.role === 'recruiter' && booking.InterviewSlot?.recruiterId === user.id);
+  return user.role === 'candidate' && booking.candidateId === user.id;
 }
 
 // Candidate books a slot
@@ -183,7 +198,7 @@ router.get('/', async (req, res) => {
       ],
       order: [['createdAt', 'DESC']],
     });
-    res.json(bookings);
+    res.json(bookings.map((booking) => sanitizeBookingForViewer(req.user, booking)));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -194,7 +209,7 @@ router.get('/:id', async (req, res) => {
     const booking = await getBookingWithRelations(req.params.id);
     if (!booking) return res.status(404).json({ error: 'Booking not found.' });
     if (!canAccessBooking(req.user, booking)) return res.status(403).json({ error: 'Forbidden' });
-    res.json(booking);
+    res.json(sanitizeBookingForViewer(req.user, booking));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -290,7 +305,7 @@ router.patch('/:id/reschedule', async (req, res) => {
       broadcast('bookings:updated', { message: 'Booking rescheduled' });
       broadcast('slots:updated', { message: 'Slot availability changed after reschedule' });
     }
-    return res.json(full);
+    return res.json(sanitizeBookingForViewer(req.user, full));
   } catch (err) {
     await tx.rollback();
     return res.status(500).json({ error: err.message });
@@ -331,9 +346,68 @@ router.patch('/:id', async (req, res) => {
       if (broadcast) broadcast('bookings:updated', { message: msg });
       if (broadcast) broadcast('slots:updated', status === 'cancelled' ? { freedSlotId: booking.slotId } : {});
     }
-    res.json(booking);
+    res.json(sanitizeBookingForViewer(req.user, booking));
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  const tx = await sequelize.transaction();
+  try {
+    const booking = await Booking.findByPk(req.params.id, {
+      include: [
+        { model: InterviewSlot, include: [{ model: User, as: 'Recruiter', attributes: ['id', 'name', 'email'] }] },
+        { model: User, as: 'Candidate', attributes: ['id', 'name', 'email'] },
+      ],
+      transaction: tx,
+      lock: tx.LOCK.UPDATE,
+    });
+
+    if (!booking) {
+      await tx.rollback();
+      return res.status(404).json({ error: 'Booking not found.' });
+    }
+    if (!canAccessBooking(req.user, booking)) {
+      await tx.rollback();
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const slot = await InterviewSlot.findByPk(booking.slotId, {
+      transaction: tx,
+      lock: tx.LOCK.UPDATE,
+    });
+
+    await BookingMessage.destroy({
+      where: { bookingId: booking.id },
+      transaction: tx,
+    });
+
+    await booking.destroy({ transaction: tx });
+
+    if (slot) {
+      const remaining = await Booking.count({
+        where: { slotId: slot.id, status: { [Op.ne]: 'cancelled' } },
+        transaction: tx,
+      });
+      slot.isBooked = remaining >= (slot.maxCandidates || 1);
+      await slot.save({ transaction: tx });
+    }
+
+    await tx.commit();
+
+    removeUploadedFile(booking.resumeUrl ? { path: path.join(resumesDir, path.basename(booking.resumeUrl)) } : null);
+
+    const broadcast = req.app.get('broadcast');
+    if (broadcast) {
+      broadcast('bookings:updated', { message: 'Booking deleted' });
+      broadcast('slots:updated', { message: 'Slot availability changed after booking deletion' });
+    }
+
+    return res.json({ message: 'Booking deleted successfully.' });
+  } catch (err) {
+    await tx.rollback();
+    return res.status(500).json({ error: err.message });
   }
 });
 

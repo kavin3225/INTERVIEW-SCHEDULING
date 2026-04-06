@@ -84,7 +84,7 @@ async function removeUserAndRelatedData(user, actorId) {
 router.get('/', async (req, res) => {
   try {
     const query = {
-      attributes: ['id', 'email', 'name', 'role', 'createdAt'],
+      attributes: ['id', 'email', 'name', 'mobileNumber', 'role', 'createdAt'],
       order: [['createdAt', 'DESC']],
     };
 
@@ -151,6 +151,7 @@ async function createPrivilegedUser(req, res, role) {
         id: user.id,
         email: user.email,
         name: user.name,
+        mobileNumber: user.mobileNumber,
         role: user.role,
         createdAt: user.createdAt,
       },
@@ -259,6 +260,7 @@ router.patch('/:id/recovery', async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
+        mobileNumber: user.mobileNumber,
         role: user.role,
         createdAt: user.createdAt,
       },

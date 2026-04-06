@@ -23,8 +23,8 @@ function buildOverviewPayload(bookings, slots) {
       status: b.status,
       slotDate: b.InterviewSlot?.slotDate,
       startTime: b.InterviewSlot?.startTime,
-      candidateName: b.Candidate?.name,
-      candidateEmail: b.Candidate?.email,
+      candidateName: 'Private Candidate',
+      candidateEmail: null,
     })),
   };
 }

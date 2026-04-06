@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import { usersApi } from '../api/client';
+import { getMaskedEmail, getPrivateCandidateLabel } from '../utils/privacy';
 import './Users.css';
 
 export default function Users() {
@@ -202,7 +203,7 @@ export default function Users() {
                   <div className="users-request-title-wrap">
                     <span className="users-request-sender">
                       {request.candidateName}
-                      {request.Candidate?.email ? ` (${request.Candidate.email})` : ''}
+                      {request.Candidate?.id ? ` (${getPrivateCandidateLabel(request.Candidate)})` : ''}
                     </span>
                     <strong>{request.requestedPassword ? 'URGENT: Password Reset Request' : 'Candidate Access Request'}</strong>
                   </div>
@@ -214,11 +215,11 @@ export default function Users() {
                   {request.note || 'The candidate is requesting help with email or password recovery.'}
                 </p>
                 <div className="users-request-meta">
-                  <span>Current email: {request.currentEmail || 'Not provided'}</span>
-                  <span>Contact email: {request.contactEmail || 'Not provided'}</span>
-                  <span>Requested email: {request.requestedEmail || 'No email change requested'}</span>
+                  <span>Current email: {request.currentEmail ? getMaskedEmail(request.currentEmail) : 'Not provided'}</span>
+                  <span>Contact email: {request.contactEmail ? getMaskedEmail(request.contactEmail) : 'Not provided'}</span>
+                  <span>Requested email: {request.requestedEmail ? getMaskedEmail(request.requestedEmail) : 'No email change requested'}</span>
                   <span>Requested password: {request.requestedPassword || 'No password requested'}</span>
-                  <span>Matched candidate: {request.Candidate?.email || 'No candidate matched yet'}</span>
+                  <span>Matched candidate: {request.Candidate?.id ? getPrivateCandidateLabel(request.Candidate) : 'No candidate matched yet'}</span>
                 </div>
                 <div className="users-request-reply">
                   <input
@@ -259,7 +260,7 @@ export default function Users() {
             <option value="">Select candidate</option>
             {candidateUsers.map((candidate) => (
               <option key={candidate.id} value={candidate.id}>
-                {candidate.name} ({candidate.email})
+                {getPrivateCandidateLabel(candidate)}
               </option>
             ))}
           </select>
@@ -291,8 +292,8 @@ export default function Users() {
             <tbody>
               {users.map((entry) => (
                 <tr key={entry.id}>
-                  <td>{entry.name}</td>
-                  <td>{entry.role === 'admin' && isAdmin ? 'Hidden for admin' : entry.email}</td>
+                  <td>{entry.role === 'candidate' ? getPrivateCandidateLabel(entry) : entry.name}</td>
+                  <td>{entry.role === 'candidate' ? 'Hidden' : entry.role === 'admin' && isAdmin ? 'Hidden for admin' : entry.email}</td>
                   <td><span className="badge scheduled">{entry.role}</span></td>
                   <td>{entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : '-'}</td>
                   {isAdmin && (

@@ -13,13 +13,18 @@ import Reports from './pages/Reports';
 import Users from './pages/Users';
 import Calendar from './pages/Calendar';
 import Profile from './pages/Profile';
+import AdminLogin from './pages/AdminLogin';
+import AdminRegister from './pages/AdminRegister';
+import { getDefaultRouteForRole } from './utils/roleRoutes';
 import './App.css';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="auth-page"><p style={{ color: '#64748b' }}>Loading...</p></div>;
   if (!user) return <Navigate to="/login" replace />;
-  if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
+  if (roles && !roles.includes(user.role)) {
+    return <Navigate to={getDefaultRouteForRole(user.role)} replace />;
+  }
   return children;
 }
 
@@ -31,6 +36,8 @@ export default function App() {
         <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin-register" element={<AdminRegister />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -53,7 +60,7 @@ export default function App() {
           <Route
             path="/bookings"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['candidate', 'recruiter']}>
                 <Bookings />
               </ProtectedRoute>
             }
@@ -69,7 +76,7 @@ export default function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['candidate']}>
                 <Profile />
               </ProtectedRoute>
             }

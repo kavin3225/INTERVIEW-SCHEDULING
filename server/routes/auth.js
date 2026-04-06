@@ -10,6 +10,7 @@ const DIRECT_ADMIN_EMAIL = 'kavin.admin@gmail.com';
 const DIRECT_ADMIN_PASSWORD = '123';
 const DIRECT_ADMIN_NAME = 'Administrator';
 const CANDIDATE_EMAIL_REGEX = /^[a-z0-9]+(?:[._][a-z0-9]+)*\.candidate@gmail\.com$/;
+const MOBILE_NUMBER_REGEX = /^\+?[0-9]{10,15}$/;
 
 // in-memory store: token -> { userId, expires }
 const resetTokens = new Map();
@@ -24,20 +25,25 @@ function generateToken(user) {
 
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name, role } = req.body;
-    if (!email || !password || !name) {
-      return res.status(400).json({ error: 'Email, password, and name are required.' });
+    const { email, password, name, role, mobileNumber } = req.body;
+    if (!email || !password || !name || !mobileNumber) {
+      return res.status(400).json({ error: 'Email, password, name, and mobile number are required.' });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedRole = role?.toLowerCase?.() || 'candidate';
+    const normalizedMobileNumber = String(mobileNumber).trim();
 
     if (normalizedRole === 'candidate' && !CANDIDATE_EMAIL_REGEX.test(normalizedEmail)) {
       return res.status(400).json({ error: 'Candidate email must be in the format name.candidate@gmail.com.' });
     }
 
-    if (!['candidate', 'recruiter'].includes(normalizedRole)) {
-      return res.status(403).json({ error: 'Public registration only supports candidate and recruiter accounts.' });
+    if (!MOBILE_NUMBER_REGEX.test(normalizedMobileNumber)) {
+      return res.status(400).json({ error: 'Mobile number must contain 10 to 15 digits and may start with +.' });
+    }
+
+    if (normalizedRole !== 'candidate') {
+      return res.status(403).json({ error: 'Public registration only supports candidate accounts.' });
     }
 
     const existing = await User.findOne({ where: { email: normalizedEmail } });
@@ -57,6 +63,7 @@ router.post('/register', async (req, res) => {
       email: normalizedEmail,
       password,
       name: trimmedName,
+      mobileNumber: normalizedMobileNumber,
       role: normalizedRole,
     });
 
@@ -68,7 +75,7 @@ router.post('/register', async (req, res) => {
 
     const token = generateToken(user);
     res.status(201).json({
-      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      user: { id: user.id, email: user.email, name: user.name, mobileNumber: user.mobileNumber, role: user.role },
       token,
     });
   } catch (err) {
@@ -105,7 +112,7 @@ router.post('/login', async (req, res) => {
 
       const token = generateToken(user);
       return res.json({
-        user: { id: user.id, email: user.email, name: user.name, role: user.role },
+        user: { id: user.id, email: user.email, name: user.name, mobileNumber: user.mobileNumber, role: user.role },
         token,
       });
     }
@@ -115,7 +122,7 @@ router.post('/login', async (req, res) => {
     }
     const token = generateToken(user);
     res.json({
-      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      user: { id: user.id, email: user.email, name: user.name, mobileNumber: user.mobileNumber, role: user.role },
       token,
     });
   } catch (err) {
@@ -125,7 +132,7 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', auth, (req, res) => {
   const u = req.user;
-  res.json({ user: { id: u.id, email: u.email, name: u.name, role: u.role } });
+  res.json({ user: { id: u.id, email: u.email, name: u.name, mobileNumber: u.mobileNumber, role: u.role } });
 });
 
 // Forgot password — send reset email

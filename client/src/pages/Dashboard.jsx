@@ -5,6 +5,7 @@ import { useSocketConnection } from '../context/SocketContext';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import Layout from '../components/Layout';
 import { slotsApi, bookingsApi } from '../api/client';
+import { getCandidateDisplayLabel } from '../utils/privacy';
 import './Dashboard.css';
 
 export default function Dashboard() {
@@ -105,7 +106,7 @@ export default function Dashboard() {
               <div key={booking.id} className="activity-item">
                 <span className={`activity-badge ${booking.status}`}>{booking.status}</span>
                 <span className="activity-text">
-                  {booking.Candidate?.name} on {booking.InterviewSlot?.slotDate} at {booking.InterviewSlot?.startTime?.slice(0, 5)}
+                  {getCandidateDisplayLabel(booking.Candidate, user?.role, booking.candidateId)} on {booking.InterviewSlot?.slotDate} at {booking.InterviewSlot?.startTime?.slice(0, 5)}
                 </span>
               </div>
             ))}

@@ -195,7 +195,8 @@
 .btn-complete,
 .btn-cancel,
 .btn-reschedule,
-.btn-reschedule-confirm {
+.btn-reschedule-confirm,
+.btn-delete-booking {
   color: #fff;
   padding: 0.43rem 0.78rem;
   border-radius: 10px;
@@ -211,6 +212,7 @@
 .btn-cancel { background: linear-gradient(135deg, #c0392b 0%, #9f281d 100%); }
 .btn-reschedule { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
 .btn-reschedule-confirm { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+.btn-delete-booking { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); }
 
 .btn-message {
   color: #5f4631;
@@ -410,7 +412,8 @@
 .btn-complete:disabled,
 .btn-cancel:disabled,
 .btn-reschedule:disabled,
-.btn-reschedule-confirm:disabled {
+.btn-reschedule-confirm:disabled,
+.btn-delete-booking:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }

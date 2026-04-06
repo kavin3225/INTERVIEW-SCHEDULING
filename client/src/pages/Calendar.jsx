@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import Layout from '../components/Layout';
 import { slotsApi, bookingsApi } from '../api/client';
+import { getCandidateDisplayLabel } from '../utils/privacy';
 import './Calendar.css';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -120,7 +121,9 @@ export default function Calendar() {
                 <div key={b.id} className={`cal-event-item booking-${b.status}`}>
                   <span className="cal-event-time">{b.InterviewSlot?.startTime?.slice(0,5)} – {b.InterviewSlot?.endTime?.slice(0,5)}</span>
                   <span className="cal-event-label">
-                    {user?.role === 'candidate' ? `With ${b.InterviewSlot?.Recruiter?.name || 'Recruiter'}` : `${b.Candidate?.name || 'Candidate'}`}
+                    {user?.role === 'candidate'
+                      ? `With ${b.InterviewSlot?.Recruiter?.name || 'Recruiter'}`
+                      : getCandidateDisplayLabel(b.Candidate, user?.role, b.candidateId)}
                   </span>
                   <span className={`cal-event-badge ${b.status}`}>{b.status}</span>
                 </div>

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import VideoBackground from '../components/VideoBackground';
 import WelcomePopup from '../components/WelcomePopup';
+import { getDefaultRouteForRole } from '../utils/roleRoutes';
 import './Auth.css';
 
 export default function AdminLogin() {
@@ -14,14 +15,7 @@ export default function AdminLogin() {
   const [emailLocked, setEmailLocked] = useState(true);
   const [passwordLocked, setPasswordLocked] = useState(true);
   const { login, logout } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (location.state?.email) {
-      setEmail(location.state.email);
-    }
-  }, [location.state]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -46,7 +40,10 @@ export default function AdminLogin() {
     <div className="auth-page login-page admin-login-page">
       <VideoBackground />
       {welcomeUser && (
-        <WelcomePopup user={welcomeUser} onClose={() => navigate('/')} />
+        <WelcomePopup
+          user={welcomeUser}
+          onClose={() => navigate(getDefaultRouteForRole(welcomeUser?.role))}
+        />
       )}
       <div className="auth-card">
         <h1>Interview Scheduler</h1>

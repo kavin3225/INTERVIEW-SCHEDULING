@@ -10,6 +10,7 @@ const { runDefaultSlotSeed } = require('./scripts/seedSlots');
 const { addPurposeColumnIfMissing } = require('./scripts/addPurposeColumn');
 const { addMaxCandidatesColumnIfMissing } = require('./scripts/addMaxCandidatesColumn');
 const { addResumeColumnsIfMissing } = require('./scripts/addResumeColumns');
+const { addMobileNumberColumnIfMissing } = require('./scripts/addMobileNumberColumn');
 const { sendReminder } = require('./services/emailService');
 
 const authRoutes = require('./routes/auth');
@@ -95,6 +96,7 @@ syncDatabase()
   .then(() => addPurposeColumnIfMissing())
   .then(() => addMaxCandidatesColumnIfMissing())
   .then(() => addResumeColumnsIfMissing())
+  .then(() => addMobileNumberColumnIfMissing())
   .then(() => InterviewSlot.count())
   .then((count) => {
     if (count === 0) return runDefaultSlotSeed();

@@ -2,6 +2,7 @@ import { NavLink, Link, useNavigate, Outlet, useLocation } from 'react-router-do
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import NotificationsBell from './NotificationsBell';
+import { getDefaultRouteForRole } from '../utils/roleRoutes';
 import './Layout.css';
 
 export default function Layout({ children }) {
@@ -18,7 +19,7 @@ export default function Layout({ children }) {
     <div className={`layout role-${user?.role || 'guest'}`}>
       <header className="layout-header">
         <div className="layout-brand-wrap">
-          <Link to="/" className="layout-brand">
+          <Link to={getDefaultRouteForRole(user?.role)} className="layout-brand">
             <span className="layout-brand-dot" />
             SyncRoom
           </Link>
@@ -45,7 +46,7 @@ export default function Layout({ children }) {
           {user?.role === 'candidate' && (
             <>
               <NavLink to="/slots">Available Slots</NavLink>
-              <NavLink to="/bookings">My Bookings</NavLink>
+              <NavLink to="/bookings">My Interviews</NavLink>
               <NavLink to="/calendar">Calendar</NavLink>
               <NavLink to="/profile">Profile</NavLink>
             </>
