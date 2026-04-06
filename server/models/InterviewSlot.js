@@ -10,6 +10,7 @@ const InterviewSlot = sequelize.define('InterviewSlot', {
   startTime: { type: DataTypes.TIME, allowNull: false },
   endTime: { type: DataTypes.TIME, allowNull: false },
   durationMinutes: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 30 },
+  maxCandidates: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
   isBooked: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 }, {
   tableName: 'interview_slots',

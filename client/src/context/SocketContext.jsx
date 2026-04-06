@@ -8,13 +8,16 @@ export function SocketProvider({ children }) {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const socketUrl = window.location.origin;
+    const socketUrl =
+      import.meta.env.VITE_SOCKET_URL ||
+      import.meta.env.VITE_API_URL ||
+      window.location.origin;
     const socketInstance = io(socketUrl, {
       path: '/socket.io',
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 10,
     });
 
     setSocket(socketInstance);

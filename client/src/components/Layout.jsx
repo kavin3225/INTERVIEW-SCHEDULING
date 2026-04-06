@@ -1,10 +1,13 @@
-import { Link, useNavigate, Outlet } from 'react-router-dom';
+import { NavLink, Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from './ThemeToggle';
+import NotificationsBell from './NotificationsBell';
 import './Layout.css';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   function handleLogout() {
     logout();
@@ -12,43 +15,57 @@ export default function Layout({ children }) {
   }
 
   return (
-    <div className="layout">
+    <div className={`layout role-${user?.role || 'guest'}`}>
       <header className="layout-header">
-        <Link to="/" className="layout-brand">
-          Interview Scheduler
-        </Link>
+        <div className="layout-brand-wrap">
+          <Link to="/" className="layout-brand">
+            <span className="layout-brand-dot" />
+            SyncRoom
+          </Link>
+          <span className="layout-subtitle">Real-time interview scheduling</span>
+        </div>
         <nav className="layout-nav">
           {user?.role === 'admin' && (
             <>
-              <Link to="/slots">Slots</Link>
-              <Link to="/users">Users</Link>
-              <Link to="/reports">Reports</Link>
+              <NavLink to="/slots">Slots</NavLink>
+              <NavLink to="/calendar">Calendar</NavLink>
+              <NavLink to="/users">Users</NavLink>
+              <NavLink to="/reports">Reports</NavLink>
             </>
           )}
           {user?.role === 'recruiter' && (
             <>
-              <Link to="/slots">My Slots</Link>
-              <Link to="/bookings">Bookings</Link>
-              <Link to="/reports">Reports</Link>
+              <NavLink to="/slots">My Slots</NavLink>
+              <NavLink to="/bookings">Bookings</NavLink>
+              <NavLink to="/calendar">Calendar</NavLink>
+              <NavLink to="/users">Candidates</NavLink>
+              <NavLink to="/reports">Reports</NavLink>
             </>
           )}
           {user?.role === 'candidate' && (
             <>
-              <Link to="/slots">Available Slots</Link>
-              <Link to="/bookings">My Bookings</Link>
+              <NavLink to="/slots">Available Slots</NavLink>
+              <NavLink to="/bookings">My Bookings</NavLink>
+              <NavLink to="/calendar">Calendar</NavLink>
+              <NavLink to="/profile">Profile</NavLink>
             </>
           )}
-          <span className="layout-user">
-            {user?.name} ({user?.role})
-          </span>
+          <NotificationsBell />
+          <span className="layout-user">{user?.name}</span>
+          <span className="layout-role">{user?.role}</span>
           <button type="button" className="layout-logout" onClick={handleLogout}>
             Log out
           </button>
         </nav>
       </header>
-      <main className="layout-main">
+      <main
+        key={location.pathname}
+        className="layout-main page-transition-enter"
+        style={{ viewTransitionName: 'app-content' }}
+      >
         {children ?? <Outlet />}
       </main>
+      <ThemeToggle />
     </div>
   );
 }

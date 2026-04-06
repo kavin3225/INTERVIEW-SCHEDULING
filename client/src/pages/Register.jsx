@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import VideoBackground from '../components/VideoBackground';
 import './Auth.css';
+
+const candidateEmailPattern = /^[a-z0-9]+(?:[._][a-z0-9]+)*\.candidate@gmail\.com$/;
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -16,9 +19,16 @@ export default function Register() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (role === 'candidate' && !candidateEmailPattern.test(normalizedEmail)) {
+      setError('Candidate email must be in the format name.candidate@gmail.com');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await register({ email, password, name, role });
+      await register({ email: normalizedEmail, password, name: name.trim(), role });
       navigate('/');
     } catch (err) {
       setError(err.message || 'Registration failed');
@@ -29,9 +39,10 @@ export default function Register() {
 
   return (
     <div className="auth-page">
+      <VideoBackground />
       <div className="auth-card">
-        <h1>Interview Scheduler</h1>
-        <h2>Create account</h2>
+        <h1>SyncRoom</h1>
+        <h2>Create your account</h2>
         {error && <div className="auth-error">{error}</div>}
         <form onSubmit={handleSubmit}>
           <input
@@ -43,11 +54,12 @@ export default function Register() {
           />
           <input
             type="email"
-            placeholder="Email"
+            placeholder={role === 'candidate' ? 'name.candidate@gmail.com' : 'recruiter@gmail.com'}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
+            pattern={role === 'candidate' ? '^[a-z0-9]+(?:[._][a-z0-9]+)*\\.candidate@gmail\\.com$' : undefined}
           />
           <input
             type="password"
@@ -58,14 +70,14 @@ export default function Register() {
             autoComplete="new-password"
           />
           <label className="auth-role">
-            I am a
+            Account type
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="candidate">Candidate</option>
               <option value="recruiter">Recruiter</option>
             </select>
           </label>
           <button type="submit" disabled={submitting}>
-            {submitting ? 'Creating account…' : 'Register'}
+            {submitting ? 'Creating account...' : 'Register'}
           </button>
         </form>
         <p className="auth-link">

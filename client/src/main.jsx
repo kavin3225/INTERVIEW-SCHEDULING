@@ -4,13 +4,16 @@ import './index.css'
 import App from './App.jsx'
 import { SocketProvider } from './context/SocketContext'
 import { ToastProvider } from './context/ToastContext'
+import { ThemeProvider } from './context/ThemeContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <SocketProvider>
-      <ToastProvider>
-        <App />
-      </ToastProvider>
-    </SocketProvider>
+    <ThemeProvider>
+      <SocketProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </SocketProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

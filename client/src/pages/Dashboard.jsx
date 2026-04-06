@@ -12,20 +12,29 @@ export default function Dashboard() {
   const { isConnected } = useSocketConnection();
   const [stats, setStats] = useState({ total: 0, available: 0, booked: 0, upcoming: 0 });
   const [recentActivity, setRecentActivity] = useState([]);
+  const [clock, setClock] = useState(() => new Date().toLocaleTimeString('en-GB', { hour12: false }));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setClock(new Date().toLocaleTimeString('en-GB', { hour12: false }));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const fetchStats = useCallback(async () => {
     try {
       const [slots, bookings] = await Promise.all([slotsApi.list(), bookingsApi.list()]);
-      const now = new Date().toISOString().slice(0, 10);
+      const today = new Date().toISOString().slice(0, 10);
+
       setStats({
         total: slots.length,
-        available: slots.filter(s => !s.isBooked && s.slotDate >= now).length,
-        booked: slots.filter(s => s.isBooked).length,
-        upcoming: bookings.filter(b => b.status === 'scheduled' && b.InterviewSlot?.slotDate >= now).length
+        available: slots.filter((slot) => !slot.isBooked && slot.slotDate >= today).length,
+        booked: slots.filter((slot) => slot.isBooked).length,
+        upcoming: bookings.filter((booking) => booking.status === 'scheduled' && booking.InterviewSlot?.slotDate >= today).length,
       });
       setRecentActivity(bookings.slice(0, 5));
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   }, []);
 
@@ -40,17 +49,17 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="page-header-row">
-        <h1 className="page-title">Dashboard</h1>
-        {isConnected && (
-          <span className="live-badge" title="Stats update in real time">
-            <span className="live-dot"></span> Live
-          </span>
-        )}
+      <div className="dashboard-hero">
+        <div>
+          <h1 className="page-title">Team Dashboard</h1>
+          <p className="dashboard-welcome">Welcome back, {user?.name}. Here is your scheduling pulse.</p>
+          <p className="dashboard-clock">{clock}</p>
+        </div>
+        <span className={`live-badge ${isConnected ? '' : 'offline'}`}>
+          <span className="live-dot" />
+          {isConnected ? 'Live updates on' : 'Offline sync'}
+        </span>
       </div>
-      <p className="dashboard-welcome">Welcome, {user?.name}.</p>
-
-      <p className="dashboard-stats-desc">Slots and bookings update in real time.</p>
 
       <div className="stats-grid">
         <div className="stat-card stat-total">
@@ -59,7 +68,7 @@ export default function Dashboard() {
         </div>
         <div className="stat-card stat-available">
           <div className="stat-value">{stats.available}</div>
-          <div className="stat-label">Available</div>
+          <div className="stat-label">Open</div>
         </div>
         <div className="stat-card stat-booked">
           <div className="stat-value">{stats.booked}</div>
@@ -73,17 +82,16 @@ export default function Dashboard() {
 
       {stats.total === 0 && (
         <div className="dashboard-empty-state">
-          <div className="dashboard-empty-icon">📅</div>
           <h3 className="dashboard-empty-title">No slots yet</h3>
           <p className="dashboard-empty-text">
             {user?.role === 'candidate' &&
-              'No interview slots have been opened yet. Recruiters will add slots here—check back later or ask your recruiter.'}
+              'Slots are not published yet. Check again later or ask your recruiter when new slots open.'}
             {(user?.role === 'recruiter' || user?.role === 'admin') &&
-              'Create your first slot so candidates can book interviews. Go to My Slots to add availability.'}
+              'Start by publishing your first interview slot so candidates can reserve it.'}
           </p>
           {(user?.role === 'recruiter' || user?.role === 'admin') && (
             <Link to="/slots" className="btn btn-primary dashboard-empty-cta">
-              Create a slot
+              Create first slot
             </Link>
           )}
         </div>
@@ -93,11 +101,11 @@ export default function Dashboard() {
         <div className="activity-section">
           <h2 className="section-title">Recent Activity</h2>
           <div className="activity-list">
-            {recentActivity.map(b => (
-              <div key={b.id} className="activity-item">
-                <span className={`activity-badge ${b.status}`}>{b.status}</span>
+            {recentActivity.map((booking) => (
+              <div key={booking.id} className="activity-item">
+                <span className={`activity-badge ${booking.status}`}>{booking.status}</span>
                 <span className="activity-text">
-                  {b.Candidate?.name} - {b.InterviewSlot?.slotDate} at {b.InterviewSlot?.startTime?.slice(0,5)}
+                  {booking.Candidate?.name} on {booking.InterviewSlot?.slotDate} at {booking.InterviewSlot?.startTime?.slice(0, 5)}
                 </span>
               </div>
             ))}
@@ -110,43 +118,57 @@ export default function Dashboard() {
           <>
             <Link to="/slots" className="dashboard-card">
               <span className="dashboard-card-title">Slots</span>
-              <span className="dashboard-card-desc">Create and manage interview slots</span>
+              <span className="dashboard-card-desc">Create and manage interview windows</span>
             </Link>
             <Link to="/users" className="dashboard-card">
               <span className="dashboard-card-title">Users</span>
-              <span className="dashboard-card-desc">Manage all users</span>
+              <span className="dashboard-card-desc">Control recruiter and candidate access</span>
+            </Link>
+            <Link to="/users" className="dashboard-card">
+              <span className="dashboard-card-title">Candidates</span>
+              <span className="dashboard-card-desc">Help candidates recover their account details</span>
             </Link>
             <Link to="/reports" className="dashboard-card">
               <span className="dashboard-card-title">Reports</span>
-              <span className="dashboard-card-desc">View interview reports</span>
+              <span className="dashboard-card-desc">Review completion and cancellation metrics</span>
             </Link>
           </>
         )}
+
         {user?.role === 'recruiter' && (
           <>
             <Link to="/slots" className="dashboard-card">
               <span className="dashboard-card-title">My Slots</span>
-              <span className="dashboard-card-desc">Create and manage interview slots</span>
+              <span className="dashboard-card-desc">Publish and tune your interview schedule</span>
             </Link>
             <Link to="/bookings" className="dashboard-card">
               <span className="dashboard-card-title">Bookings</span>
-              <span className="dashboard-card-desc">View and update interview bookings</span>
+              <span className="dashboard-card-desc">Track upcoming candidate interviews</span>
             </Link>
             <Link to="/reports" className="dashboard-card">
               <span className="dashboard-card-title">Reports</span>
-              <span className="dashboard-card-desc">Overview and history</span>
+              <span className="dashboard-card-desc">Understand team scheduling trends</span>
             </Link>
           </>
         )}
+
         {user?.role === 'candidate' && (
           <>
             <Link to="/slots" className="dashboard-card">
               <span className="dashboard-card-title">Available Slots</span>
-              <span className="dashboard-card-desc">Book an interview slot</span>
+              <span className="dashboard-card-desc">Reserve your preferred interview time</span>
             </Link>
             <Link to="/bookings" className="dashboard-card">
               <span className="dashboard-card-title">My Bookings</span>
-              <span className="dashboard-card-desc">View and manage your interviews</span>
+              <span className="dashboard-card-desc">Manage your upcoming interviews</span>
+            </Link>
+            <Link to="/calendar" className="dashboard-card">
+              <span className="dashboard-card-title">Calendar</span>
+              <span className="dashboard-card-desc">Visual overview of your schedule</span>
+            </Link>
+            <Link to="/profile" className="dashboard-card">
+              <span className="dashboard-card-title">My Profile</span>
+              <span className="dashboard-card-desc">View your interview history and stats</span>
             </Link>
           </>
         )}

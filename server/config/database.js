@@ -6,14 +6,15 @@ require('dotenv').config();
 const useSqlite = process.env.USE_SQLITE === 'true' || process.env.DB_USE_SQLITE === 'true';
 
 if (useSqlite) {
-  const dir = path.join(__dirname, '..', 'data');
+  const storagePath = process.env.SQLITE_STORAGE_PATH || path.join(__dirname, '..', 'data', 'scheduler.sqlite');
+  const dir = path.dirname(storagePath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
 const sequelize = useSqlite
   ? new Sequelize({
       dialect: 'sqlite',
-      storage: path.join(__dirname, '..', 'data', 'scheduler.sqlite'),
+      storage: process.env.SQLITE_STORAGE_PATH || path.join(__dirname, '..', 'data', 'scheduler.sqlite'),
       logging: process.env.NODE_ENV === 'development' ? console.log : false,
     })
   : new Sequelize(

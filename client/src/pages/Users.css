@@ -1,0 +1,288 @@
+.users-actions-card {
+  margin-bottom: 1rem;
+  background: linear-gradient(145deg, rgba(255, 248, 238, 0.9), rgba(236, 250, 244, 0.82));
+}
+
+.users-kick-form {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.users-admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.users-recovery-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.users-kick-form input {
+  min-width: 260px;
+  border: 1px solid rgba(166, 142, 112, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  background: #ffffff;
+  color: #111827;
+}
+
+.users-admin-form input {
+  border: 1px solid rgba(166, 142, 112, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  background: #ffffff;
+  color: #111827;
+}
+
+.users-recovery-form input,
+.users-recovery-form select {
+  border: 1px solid rgba(166, 142, 112, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  background: #ffffff;
+  color: #111827;
+}
+
+.users-kick-form input::placeholder,
+.users-admin-form input::placeholder,
+.users-recovery-form input::placeholder {
+  color: #6b7280;
+}
+
+.users-help-text {
+  margin: 0 0 0.85rem;
+  color: #475569;
+  font-size: 0.92rem;
+}
+
+.users-inbox-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.65rem;
+}
+
+.users-inbox-header h3 {
+  margin: 0;
+}
+
+.users-inbox-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.22);
+}
+
+.users-empty-note {
+  margin: 0;
+  color: #64748b;
+}
+
+.users-request-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.users-request-card {
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(166, 142, 112, 0.18);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(244, 247, 255, 0.78));
+  box-shadow: 0 14px 28px rgba(148, 163, 184, 0.12);
+}
+
+.users-request-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.6rem;
+}
+
+.users-request-title-wrap {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.users-request-sender {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #5b5fc7;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.users-request-time {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.users-request-body {
+  margin: 0 0 0.8rem;
+  color: #334155;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.users-request-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.users-request-meta span {
+  padding: 0.36rem 0.62rem;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.72);
+  color: #475569;
+  font-size: 0.78rem;
+}
+
+.users-request-reply {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.users-request-reply input {
+  flex: 1;
+  min-width: 240px;
+  padding: 0.72rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(166, 142, 112, 0.24);
+  background: rgba(255, 255, 255, 0.92);
+  color: #94a3b8;
+  font-size: 0.92rem;
+}
+
+.users-request-reply .btn {
+  min-width: 120px;
+}
+
+.users-success {
+  margin-top: 0.85rem;
+  padding: 0.68rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(52, 211, 153, 0.14);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #166534;
+}
+
+.users-remove-btn {
+  min-width: 126px;
+  padding: 0.68rem 0.95rem;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(127, 29, 29, 0.08);
+  color: #fda4af;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.users-remove-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(251, 113, 133, 0.42);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(127, 29, 29, 0.14);
+  color: #fecdd3;
+}
+
+.users-remove-btn:focus-visible {
+  outline: 3px solid rgba(251, 113, 133, 0.22);
+  outline-offset: 2px;
+}
+
+.users-remove-btn:disabled {
+  opacity: 0.62;
+}
+
+.data-table td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .users-kick-form input,
+  .users-recovery-form select,
+  .users-recovery-form input {
+    min-width: 100%;
+  }
+}
+
+/* ── DARK MODE OVERRIDES ── */
+body.dark .users-actions-card {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+}
+
+body.dark .users-inbox-badge {
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
+}
+
+body.dark .users-help-text,
+body.dark .users-empty-note {
+  color: #94a3b8;
+}
+
+body.dark .users-request-card {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.96));
+  border-color: rgba(100, 116, 139, 0.24);
+  box-shadow: 0 14px 32px rgba(2, 6, 23, 0.38);
+}
+
+body.dark .users-request-sender {
+  background: rgba(129, 140, 248, 0.16);
+  color: #c7d2fe;
+}
+
+body.dark .users-request-title-wrap strong,
+body.dark .users-request-body {
+  color: #e2e8f0;
+}
+
+body.dark .users-request-time {
+  color: #94a3b8;
+}
+
+body.dark .users-request-meta span {
+  background: rgba(51, 65, 85, 0.86);
+  color: #cbd5e1;
+}
+
+body.dark .users-request-reply input {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(100, 116, 139, 0.34);
+  color: #94a3b8;
+}
+
+body.dark .users-remove-btn {
+  border-color: rgba(251, 113, 133, 0.24);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+    rgba(127, 29, 29, 0.12);
+  color: #fda4af;
+}

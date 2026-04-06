@@ -1,0 +1,13 @@
+.network-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: block;
+  background:
+    radial-gradient(circle at top left, rgba(88, 122, 198, 0.18), transparent 34%),
+    radial-gradient(circle at bottom center, rgba(120, 92, 179, 0.2), transparent 42%),
+    linear-gradient(180deg, #1b2142 0%, #251d45 55%, #21173e 100%);
+}

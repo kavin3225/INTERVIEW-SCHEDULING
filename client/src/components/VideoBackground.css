@@ -1,0 +1,128 @@
+.video-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background-size: 400% 400%;
+  animation: gradientMove 20s ease infinite;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 173, 181, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(240, 84, 84, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(52, 211, 153, 0.15) 0%, transparent 50%);
+  animation: pulseOverlay 15s ease-in-out infinite;
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 173, 181, 0.15) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(240, 84, 84, 0.1) 100%
+  );
+  animation: rotateGradient 30s linear infinite;
+}
+
+.particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+.wave-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 200px;
+  background: linear-gradient(to right, transparent, rgba(0, 173, 181, 0.1), transparent);
+  border-radius: 50%;
+  animation: waveMove 15s linear infinite;
+}
+
+.wave1 {
+  animation-duration: 15s;
+  opacity: 0.3;
+}
+
+.wave2 {
+  animation-duration: 20s;
+  animation-delay: -5s;
+  opacity: 0.2;
+  height: 250px;
+}
+
+.wave3 {
+  animation-duration: 25s;
+  animation-delay: -10s;
+  opacity: 0.15;
+  height: 300px;
+}
+
+@keyframes gradientMove {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulseOverlay {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes rotateGradient {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes waveMove {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-20px);
+  }
+}

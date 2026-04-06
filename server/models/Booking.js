@@ -11,6 +11,8 @@ const Booking = sequelize.define('Booking', {
     defaultValue: 'scheduled',
   },
   notes: { type: DataTypes.TEXT, allowNull: true },
+  resumeUrl: { type: DataTypes.TEXT, allowNull: true },
+  resumeFileName: { type: DataTypes.STRING, allowNull: true },
 }, {
   tableName: 'bookings',
   timestamps: true,

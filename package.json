@@ -1,16 +1,22 @@
 {
-  "name": "interview-scheduler",
+  "name": "interview-scheduler-premium",
   "version": "1.0.0",
-  "description": "Realtime Interview Scheduling - Recruiters & Candidates",
+  "description": "Realtime Interview Scheduling (Premium) - Recruiters & Candidates",
   "private": true,
   "scripts": {
-    "server": "node server/index.js",
+    "start": "npm run dev",
+    "build": "cd client && npm run build",
+    "serve": "node server/index.js",
+    "server": "nodemon server/index.js",
     "client": "cd client && npm run dev",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "install:all": "npm install && cd client && npm install",
+    "postinstall": "cd client && npm install",
     "seed:admin": "node server/scripts/seedAdmin.js",
     "seed:slots": "node server/scripts/seedSlots.js",
     "migrate:purpose": "node server/scripts/addPurposeColumn.js",
+    "migrate:max-candidates": "node server/scripts/addMaxCandidatesColumn.js",
+    "migrate:resume": "node server/scripts/addResumeColumns.js",
     "check-db": "node server/scripts/checkDb.js"
   },
   "dependencies": {
@@ -19,13 +25,16 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.1",
     "mysql2": "^3.6.5",
+    "node-cron": "^4.2.1",
     "nodemailer": "^6.9.7",
     "sequelize": "^6.35.2",
     "socket.io": "^4.7.2",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1"
   }
 }

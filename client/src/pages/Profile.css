@@ -1,0 +1,257 @@
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--btn-primary-bg);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+}
+
+.profile-email { color: var(--color-text-muted); font-size: 0.88rem; margin: 0.2rem 0; }
+
+.profile-role-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(102, 126, 234, 0.15);
+  color: var(--color-primary);
+}
+
+.profile-countdown {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.profile-countdown-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.profile-countdown-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.profile-countdown-sub { font-size: 0.8rem; color: var(--color-text-muted); }
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.profile-stat {
+  background: var(--card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 0.9rem;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.profile-stat-value {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--color-heading);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.profile-stat-value.upcoming { color: #667eea; }
+.profile-stat-value.completed { color: #10b981; }
+.profile-stat-value.cancelled { color: #ef4444; }
+
+.profile-stat-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.profile-insight-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.profile-insight-card {
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background: linear-gradient(145deg, rgba(255, 250, 241, 0.92), rgba(234, 250, 246, 0.84));
+  box-shadow: var(--shadow-soft);
+}
+
+.profile-insight-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7a5b40;
+  font-weight: 700;
+}
+
+.profile-insight-value {
+  display: block;
+  margin: 0.28rem 0;
+  font-size: 1.35rem;
+  color: var(--color-heading);
+}
+
+.profile-insight-sub {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
+.profile-charts-row {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+  gap: 1rem;
+  margin-bottom: 1.35rem;
+}
+
+.profile-chart-card {
+  background: var(--card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1rem 1.15rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.profile-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: 0.8rem;
+}
+
+.profile-chart-card .profile-section-title {
+  margin-bottom: 0.4rem;
+}
+
+.profile-chart-tooltip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  box-shadow: var(--shadow-soft);
+  font-size: 0.78rem;
+}
+
+.profile-chart-tooltip-label {
+  margin-bottom: 0.28rem;
+  color: var(--color-heading);
+  font-weight: 700;
+}
+
+.profile-history { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.profile-history-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  border-left: 3px solid transparent;
+  transition: transform 0.15s;
+}
+
+.profile-history-item:hover { transform: translateX(3px); }
+.profile-history-item.status-scheduled { border-left-color: #667eea; }
+.profile-history-item.status-completed { border-left-color: #10b981; }
+.profile-history-item.status-cancelled { border-left-color: #ef4444; }
+
+.phi-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 36px;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.phi-date strong { font-size: 1.2rem; color: var(--color-heading); line-height: 1; }
+
+.phi-info { flex: 1; display: flex; flex-direction: column; gap: 0.15rem; }
+.phi-time { font-size: 0.82rem; font-weight: 700; color: var(--color-text); }
+.phi-title { font-size: 0.78rem; color: var(--color-text-muted); }
+.phi-recruiter { font-size: 0.74rem; color: var(--color-text-secondary); }
+
+.phi-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.phi-badge.scheduled { background: rgba(102, 126, 234, 0.15); color: #4f46e5; }
+.phi-badge.completed { background: rgba(16, 185, 129, 0.15); color: #059669; }
+.phi-badge.cancelled { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
+
+@media (max-width: 860px) {
+  .profile-insight-strip,
+  .profile-charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+body.dark .profile-stat {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(100, 116, 139, 0.22);
+}
+
+body.dark .profile-history-item,
+body.dark .profile-insight-card,
+body.dark .profile-chart-card {
+  background: rgba(30, 41, 59, 0.88);
+  border-color: rgba(100, 116, 139, 0.22);
+}
+
+body.dark .profile-insight-label { color: #94a3b8; }
+body.dark .phi-time { color: #f1f5f9; }
+body.dark .phi-title { color: #94a3b8; }
+body.dark .phi-recruiter { color: #64748b; }
