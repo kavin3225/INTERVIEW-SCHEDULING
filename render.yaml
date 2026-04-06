@@ -11,7 +11,7 @@ services:
       - key: USE_SQLITE
         value: "true"
       - key: SQLITE_STORAGE_PATH
-        value: /opt/render/project-data/scheduler.sqlite
+        value: /tmp/scheduler.sqlite
       - key: CLIENT_URL
         sync: false
       - key: JWT_SECRET
@@ -22,7 +22,3 @@ services:
         value: 123
       - key: ADMIN_NAME
         value: Administrator
-    disk:
-      name: scheduler-data
-      mountPath: /opt/render/project-data
-      sizeGB: 1
