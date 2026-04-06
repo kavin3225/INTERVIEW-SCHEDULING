@@ -24,11 +24,13 @@ const server = http.createServer(app);
 const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
 const uploadsPath = path.join(__dirname, 'uploads');
 
+const clientOrigin = (process.env.CLIENT_URL || 'http://localhost:5173').trim();
+
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_URL || 'http://localhost:5173', methods: ['GET', 'POST'] },
+  cors: { origin: clientOrigin, methods: ['GET', 'POST'] },
 });
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: clientOrigin, credentials: true }));
 app.use(express.json());
 app.use('/uploads', express.static(uploadsPath));
 
