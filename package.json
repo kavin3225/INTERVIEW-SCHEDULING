@@ -13,6 +13,7 @@
     "install:all": "npm install && cd client && npm install",
     "postinstall": "cd client && npm install",
     "seed:admin": "node server/scripts/seedAdmin.js",
+    "seed:recruiter": "node server/scripts/seedRecruiter.js",
     "seed:slots": "node server/scripts/seedSlots.js",
     "migrate:purpose": "node server/scripts/addPurposeColumn.js",
     "migrate:max-candidates": "node server/scripts/addMaxCandidatesColumn.js",

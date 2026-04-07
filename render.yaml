@@ -3,7 +3,7 @@ services:
     name: interview-scheduler
     runtime: node
     plan: free
-    buildCommand: npm install && cd client && npm install --include=dev && npm run build
+    buildCommand: npm install && cd client && npm install --include=dev && npm run build && node server/scripts/seedRecruiter.js
     startCommand: node server/index.js
     envVars:
       - key: NODE_ENV
