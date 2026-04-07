@@ -5,12 +5,13 @@ const express = require('express');
 const cors = require('cors');
 const cron = require('node-cron');
 const { Server } = require('socket.io');
-const { syncDatabase, InterviewSlot, Booking, User, BlockedDate, BookingMessage, SlotMessage } = require('./models');
+const { syncDatabase, InterviewSlot, Booking, User, BlockedDate, BookingMessage, SlotMessage, RecoveryRequestMessage } = require('./models');
 const { runDefaultSlotSeed } = require('./scripts/seedSlots');
 const { addPurposeColumnIfMissing } = require('./scripts/addPurposeColumn');
 const { addMaxCandidatesColumnIfMissing } = require('./scripts/addMaxCandidatesColumn');
 const { addResumeColumnsIfMissing } = require('./scripts/addResumeColumns');
 const { addMobileNumberColumnIfMissing } = require('./scripts/addMobileNumberColumn');
+const { addRecoveryRequestMobileNumberColumnIfMissing } = require('./scripts/addRecoveryRequestMobileNumberColumn');
 const { sendReminder } = require('./services/emailService');
 
 const authRoutes = require('./routes/auth');
@@ -93,10 +94,12 @@ syncDatabase()
   .then(() => BlockedDate.sync())
   .then(() => BookingMessage.sync())
   .then(() => SlotMessage.sync())
+  .then(() => RecoveryRequestMessage.sync())
   .then(() => addPurposeColumnIfMissing())
   .then(() => addMaxCandidatesColumnIfMissing())
   .then(() => addResumeColumnsIfMissing())
   .then(() => addMobileNumberColumnIfMissing())
+  .then(() => addRecoveryRequestMobileNumberColumnIfMissing())
   .then(() => InterviewSlot.count())
   .then((count) => {
     if (count === 0) return runDefaultSlotSeed();

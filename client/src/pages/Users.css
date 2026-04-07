@@ -156,6 +156,37 @@
   font-size: 0.78rem;
 }
 
+.users-request-thread {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.users-request-message,
+.users-request-empty-thread {
+  padding: 0.75rem 0.85rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(166, 142, 112, 0.16);
+}
+
+.users-request-message-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.users-request-message p,
+.users-request-empty-thread {
+  margin: 0;
+  color: #334155;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .users-request-reply {
   display: flex;
   gap: 0.65rem;
@@ -270,6 +301,18 @@ body.dark .users-request-time {
 
 body.dark .users-request-meta span {
   background: rgba(51, 65, 85, 0.86);
+  color: #cbd5e1;
+}
+
+body.dark .users-request-message,
+body.dark .users-request-empty-thread {
+  background: rgba(15, 23, 42, 0.84);
+  border-color: rgba(100, 116, 139, 0.24);
+}
+
+body.dark .users-request-message p,
+body.dark .users-request-empty-thread,
+body.dark .users-request-message-meta {
   color: #cbd5e1;
 }
 

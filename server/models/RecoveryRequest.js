@@ -6,6 +6,7 @@ const RecoveryRequest = sequelize.define('RecoveryRequest', {
   candidateName: { type: DataTypes.STRING(255), allowNull: false },
   currentEmail: { type: DataTypes.STRING(255), allowNull: true },
   contactEmail: { type: DataTypes.STRING(255), allowNull: true },
+  mobileNumber: { type: DataTypes.STRING(20), allowNull: true },
   requestedEmail: { type: DataTypes.STRING(255), allowNull: true },
   requestedPassword: { type: DataTypes.STRING(255), allowNull: true },
   note: { type: DataTypes.TEXT, allowNull: true },

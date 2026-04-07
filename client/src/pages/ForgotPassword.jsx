@@ -5,10 +5,6 @@ import VideoBackground from '../components/VideoBackground';
 import './Auth.css';
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
-  const [submitting, setSubmitting] = useState(false);
   const [requestForm, setRequestForm] = useState({
     candidateName: '',
     email: '',
@@ -18,21 +14,32 @@ export default function ForgotPassword() {
   const [requestMessage, setRequestMessage] = useState('');
   const [requestError, setRequestError] = useState('');
   const [requestSubmitting, setRequestSubmitting] = useState(false);
+  const [thread, setThread] = useState(null);
+  const [threadError, setThreadError] = useState('');
+  const [threadLoading, setThreadLoading] = useState(false);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError('');
-    setMessage('');
-    setSubmitting(true);
+  async function loadThread(emailValue) {
+    const normalizedEmail = emailValue.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      setThread(null);
+      setThreadError('Enter your email to view recruiter replies.');
+      return;
+    }
+
+    setThreadLoading(true);
+    setThreadError('');
 
     try {
-      const response = await authApi.forgotPassword(email.trim());
-      setMessage(response.message || 'If that email exists, a reset link has been sent.');
-      setEmail('');
+      const response = await authApi.lookupRecoveryThread({
+        email: normalizedEmail,
+      });
+      setThread(response.request || null);
     } catch (err) {
-      setError(err.message || 'Unable to send reset link.');
+      setThread(null);
+      setThreadError(err.message || 'Unable to load recruiter replies.');
     } finally {
-      setSubmitting(false);
+      setThreadLoading(false);
     }
   }
 
@@ -40,17 +47,18 @@ export default function ForgotPassword() {
     e.preventDefault();
     setRequestError('');
     setRequestMessage('');
+
     setRequestSubmitting(true);
 
     try {
-      const response = await authApi.submitRecoveryRequest(requestForm);
-      setRequestMessage(response.message || 'Recovery request sent to the recruiter.');
-      setRequestForm({
-        candidateName: '',
-        email: '',
-        requestedEmail: '',
-        requestedPassword: '',
+      const response = await authApi.submitRecoveryRequest({
+        ...requestForm,
+        candidateName: requestForm.candidateName.trim(),
+        email: requestForm.email.trim().toLowerCase(),
+        requestedEmail: requestForm.requestedEmail.trim().toLowerCase(),
       });
+      setRequestMessage(response.message || 'Recovery request sent to the recruiter.');
+      await loadThread(requestForm.email);
     } catch (err) {
       setRequestError(err.message || 'Unable to send recovery request.');
     } finally {
@@ -63,25 +71,7 @@ export default function ForgotPassword() {
       <VideoBackground />
       <div className="auth-card auth-card-wide">
         <h1>Reset your password</h1>
-        <h2>Send a reset link or request recruiter help if you lost access to your email.</h2>
-
-        {error && <div className="auth-error">{error}</div>}
-        {message && <div className="auth-success">{message}</div>}
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-          />
-          <button type="submit" disabled={submitting}>
-            {submitting ? 'Sending link...' : 'Send reset link'}
-          </button>
-        </form>
-
-        <div className="auth-divider">or request recruiter support</div>
+        <h2>Request recruiter help if you lost access to your email.</h2>
 
         {requestError && <div className="auth-error">{requestError}</div>}
         {requestMessage && <div className="auth-success">{requestMessage}</div>}
@@ -117,6 +107,53 @@ export default function ForgotPassword() {
             {requestSubmitting ? 'Sending request...' : 'Request recruiter help'}
           </button>
         </form>
+
+        <div className="auth-support-actions">
+          <button
+            type="button"
+            className="auth-support-secondary"
+            onClick={() => loadThread(requestForm.email)}
+            disabled={threadLoading}
+          >
+            {threadLoading ? 'Checking replies...' : 'Check recruiter replies'}
+          </button>
+        </div>
+
+        {threadError && <div className="auth-info">{threadError}</div>}
+        {thread && (
+          <div className="auth-thread-card">
+            <div className="auth-thread-head">
+              <div>
+                <h3>Support replies</h3>
+                <p>
+                  Request status: <strong>{thread.status}</strong>
+                </p>
+              </div>
+              <span>{thread.createdAt ? new Date(thread.createdAt).toLocaleString() : ''}</span>
+            </div>
+
+            <div className="auth-thread-meta">
+              <span>Email: {thread.currentEmail || thread.contactEmail || 'Not provided'}</span>
+              <span>Requested email: {thread.requestedEmail || 'No email change requested'}</span>
+            </div>
+
+            {thread.messages?.length ? (
+              <div className="auth-thread-list">
+                {thread.messages.map((message) => (
+                  <div key={message.id} className="auth-thread-bubble">
+                    <div className="auth-thread-bubble-meta">
+                      <strong>{message.Sender?.name || 'Recruiter'}</strong>
+                      <span>{message.createdAt ? new Date(message.createdAt).toLocaleString() : ''}</span>
+                    </div>
+                    <p>{message.message}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="auth-thread-empty">No recruiter replies yet. Check back here after they respond.</p>
+            )}
+          </div>
+        )}
 
         <p className="auth-link">
           Remembered it? <Link to="/login">Back to sign in</Link>

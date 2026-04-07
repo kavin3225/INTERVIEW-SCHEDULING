@@ -260,6 +260,97 @@
   color: #99f6e4;
 }
 
+.auth-support-actions {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.9rem;
+}
+
+.auth-card button.auth-support-secondary {
+  width: 100%;
+  margin-top: 0;
+  background: rgba(125, 211, 252, 0.14);
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  color: #dbeafe;
+  box-shadow: none;
+}
+
+.auth-thread-card {
+  position: relative;
+  z-index: 1;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 184, 255, 0.22);
+  background: rgba(7, 16, 32, 0.46);
+}
+
+.auth-thread-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  color: #dbeafe;
+}
+
+.auth-thread-head h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  color: #f5fbff;
+}
+
+.auth-thread-head p,
+.auth-thread-head span {
+  margin: 0;
+  color: rgba(214, 230, 255, 0.8);
+  font-size: 0.82rem;
+}
+
+.auth-thread-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+}
+
+.auth-thread-meta span {
+  padding: 0.34rem 0.58rem;
+  border-radius: 999px;
+  background: rgba(148, 184, 255, 0.12);
+  color: #dbeafe;
+  font-size: 0.76rem;
+}
+
+.auth-thread-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.auth-thread-bubble {
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 184, 255, 0.18);
+}
+
+.auth-thread-bubble-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.45rem;
+  color: rgba(214, 230, 255, 0.82);
+  font-size: 0.78rem;
+}
+
+.auth-thread-bubble p,
+.auth-thread-empty {
+  margin: 0;
+  color: #ecf4ff;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 .login-page {
   background:
     radial-gradient(circle at 50% 15%, rgba(201, 53, 90, 0.34), transparent 28%),

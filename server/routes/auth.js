@@ -1,7 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { User, RecoveryRequest, sequelize } = require('../models');
+const { Op } = require('sequelize');
+const { User, RecoveryRequest, RecoveryRequestMessage, sequelize } = require('../models');
 const { auth } = require('../middleware/auth');
 const { sendWelcomeEmail, sendPasswordReset } = require('../services/emailService');
 
@@ -161,6 +162,7 @@ router.post('/recovery-request', async (req, res) => {
     const simpleEmail = String(req.body?.email || '').trim().toLowerCase();
     const currentEmail = String(req.body?.currentEmail || simpleEmail).trim().toLowerCase();
     const contactEmail = String(req.body?.contactEmail || simpleEmail).trim().toLowerCase();
+    const mobileNumber = String(req.body?.mobileNumber || '').trim();
     const requestedEmail = String(req.body?.requestedEmail || '').trim().toLowerCase();
     const requestedPassword = String(req.body?.requestedPassword || '').trim();
     const note = String(req.body?.note || '').trim();
@@ -170,6 +172,9 @@ router.post('/recovery-request', async (req, res) => {
     }
     if (!currentEmail && !contactEmail) {
       return res.status(400).json({ error: 'Provide the current email or a contact email.' });
+    }
+    if (mobileNumber && !MOBILE_NUMBER_REGEX.test(mobileNumber)) {
+      return res.status(400).json({ error: 'Mobile number must contain 10 to 15 digits and may start with +.' });
     }
 
     let matchedCandidate = null;
@@ -182,6 +187,7 @@ router.post('/recovery-request', async (req, res) => {
       candidateName,
       currentEmail: currentEmail || null,
       contactEmail: contactEmail || null,
+      mobileNumber: mobileNumber || null,
       requestedEmail: requestedEmail || null,
       requestedPassword: requestedPassword || null,
       note: note || null,
@@ -198,6 +204,53 @@ router.post('/recovery-request', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message || 'Unable to submit recovery request.' });
+  }
+});
+
+router.post('/recovery-request-thread', async (req, res) => {
+  try {
+    const email = String(req.body?.email || '').trim().toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required.' });
+    }
+
+    const request = await RecoveryRequest.findOne({
+      where: {
+        [Op.or]: [
+          { currentEmail: email },
+          { contactEmail: email },
+        ],
+      },
+      include: [{
+        model: RecoveryRequestMessage,
+        as: 'Messages',
+        required: false,
+        include: [{ model: User, as: 'Sender', attributes: ['id', 'name', 'role'] }],
+      }],
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (!request) {
+      return res.status(404).json({ error: 'No support request found for that email.' });
+    }
+
+    res.json({
+      request: {
+        id: request.id,
+        candidateName: request.candidateName,
+        status: request.status,
+        currentEmail: request.currentEmail,
+        contactEmail: request.contactEmail,
+        mobileNumber: request.mobileNumber,
+        requestedEmail: request.requestedEmail,
+        createdAt: request.createdAt,
+        updatedAt: request.updatedAt,
+        messages: (request.Messages || []).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)),
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Unable to load support replies.' });
   }
 });
 

@@ -24,6 +24,8 @@ export default function Users() {
   const [recoveryMessage, setRecoveryMessage] = useState('');
   const [recovering, setRecovering] = useState(false);
   const [updatingRequestId, setUpdatingRequestId] = useState(null);
+  const [replyDrafts, setReplyDrafts] = useState({});
+  const [replySendingId, setReplySendingId] = useState(null);
 
   const loadUsers = useCallback(async () => {
     try {
@@ -134,6 +136,26 @@ export default function Users() {
     }
   }
 
+  async function handleSendReply(requestId) {
+    const message = String(replyDrafts[requestId] || '').trim();
+    if (!message) {
+      setError('Enter a reply message before sending.');
+      return;
+    }
+
+    setReplySendingId(requestId);
+    setError('');
+    try {
+      await usersApi.sendRecoveryMessage(requestId, { message });
+      setReplyDrafts((current) => ({ ...current, [requestId]: '' }));
+      await loadUsers();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setReplySendingId(null);
+    }
+  }
+
   function handlePrepareRecovery(request) {
     const matchedCandidateId = request.Candidate?.id ? String(request.Candidate.id) : '';
     setRecoveryForm({
@@ -217,23 +239,50 @@ export default function Users() {
                 <div className="users-request-meta">
                   <span>Current email: {request.currentEmail ? getMaskedEmail(request.currentEmail) : 'Not provided'}</span>
                   <span>Contact email: {request.contactEmail ? getMaskedEmail(request.contactEmail) : 'Not provided'}</span>
+                  <span>Mobile number: {request.mobileNumber || 'Not provided'}</span>
                   <span>Requested email: {request.requestedEmail ? getMaskedEmail(request.requestedEmail) : 'No email change requested'}</span>
                   <span>Requested password: {request.requestedPassword || 'No password requested'}</span>
                   <span>Matched candidate: {request.Candidate?.id ? getPrivateCandidateLabel(request.Candidate) : 'No candidate matched yet'}</span>
                 </div>
+                <div className="users-request-thread">
+                  {request.Messages?.length ? (
+                    [...request.Messages]
+                      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+                      .map((message) => (
+                        <div key={message.id} className="users-request-message">
+                          <div className="users-request-message-meta">
+                            <strong>{message.Sender?.name || message.Sender?.email || 'Team'}</strong>
+                            <span>{message.createdAt ? new Date(message.createdAt).toLocaleString() : ''}</span>
+                          </div>
+                          <p>{message.message}</p>
+                        </div>
+                      ))
+                  ) : (
+                    <p className="users-request-empty-thread">No replies sent yet.</p>
+                  )}
+                </div>
                 <div className="users-request-reply">
                   <input
                     type="text"
-                    value="Write your reply..."
-                    readOnly
-                    aria-label="Reply preview"
+                    value={replyDrafts[request.id] || ''}
+                    onChange={(e) => setReplyDrafts((current) => ({ ...current, [request.id]: e.target.value }))}
+                    placeholder="Write your reply..."
+                    aria-label="Reply message"
                   />
                   <button
                     type="button"
                     className="btn btn-primary"
+                    onClick={() => handleSendReply(request.id)}
+                    disabled={replySendingId === request.id}
+                  >
+                    {replySendingId === request.id ? 'Sending...' : 'Reply'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
                     onClick={() => handlePrepareRecovery(request)}
                   >
-                    Reply
+                    Update access
                   </button>
                   <button
                     type="button"
@@ -260,7 +309,7 @@ export default function Users() {
             <option value="">Select candidate</option>
             {candidateUsers.map((candidate) => (
               <option key={candidate.id} value={candidate.id}>
-                {getPrivateCandidateLabel(candidate)}
+                {candidate.name} ({candidate.email})
               </option>
             ))}
           </select>
@@ -292,8 +341,8 @@ export default function Users() {
             <tbody>
               {users.map((entry) => (
                 <tr key={entry.id}>
-                  <td>{entry.role === 'candidate' ? getPrivateCandidateLabel(entry) : entry.name}</td>
-                  <td>{entry.role === 'candidate' ? 'Hidden' : entry.role === 'admin' && isAdmin ? 'Hidden for admin' : entry.email}</td>
+                  <td>{entry.name}</td>
+                  <td>{entry.email}</td>
                   <td><span className="badge scheduled">{entry.role}</span></td>
                   <td>{entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : '-'}</td>
                   {isAdmin && (

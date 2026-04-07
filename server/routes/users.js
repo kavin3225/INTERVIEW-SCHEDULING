@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { User, InterviewSlot, Booking, RecoveryRequest, sequelize } = require('../models');
+const { User, InterviewSlot, Booking, RecoveryRequest, RecoveryRequestMessage, sequelize } = require('../models');
 const { auth, requireRole } = require('../middleware/auth');
 const { sendWelcomeEmail } = require('../services/emailService');
 
@@ -273,12 +273,53 @@ router.patch('/:id/recovery', async (req, res) => {
 router.get('/recovery-requests/all', async (req, res) => {
   try {
     const requests = await RecoveryRequest.findAll({
-      include: [{ model: User, as: 'Candidate', attributes: ['id', 'name', 'email'], required: false }],
+      include: [
+        { model: User, as: 'Candidate', attributes: ['id', 'name', 'email'], required: false },
+        {
+          model: RecoveryRequestMessage,
+          as: 'Messages',
+          required: false,
+          include: [{ model: User, as: 'Sender', attributes: ['id', 'name', 'email', 'role'] }],
+        },
+      ],
       order: [['createdAt', 'DESC']],
     });
     res.json(requests);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/recovery-requests/:id/messages', async (req, res) => {
+  try {
+    const request = await RecoveryRequest.findByPk(req.params.id);
+    if (!request) {
+      return res.status(404).json({ error: 'Recovery request not found.' });
+    }
+
+    const message = String(req.body?.message || '').trim();
+    if (!message) {
+      return res.status(400).json({ error: 'Reply message is required.' });
+    }
+
+    const created = await RecoveryRequestMessage.create({
+      recoveryRequestId: request.id,
+      senderId: req.user.id,
+      message,
+    });
+
+    const full = await RecoveryRequestMessage.findByPk(created.id, {
+      include: [{ model: User, as: 'Sender', attributes: ['id', 'name', 'email', 'role'] }],
+    });
+
+    const broadcast = req.app.get('broadcast');
+    if (broadcast) {
+      broadcast('users:updated', { message: `New recovery reply for ${request.candidateName}` });
+    }
+
+    res.status(201).json(full);
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Unable to send recovery reply.' });
   }
 });
 
