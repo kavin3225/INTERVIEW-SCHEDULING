@@ -10,6 +10,9 @@ const router = express.Router();
 const DIRECT_ADMIN_EMAIL = 'kavin.admin@gmail.com';
 const DIRECT_ADMIN_PASSWORD = '123';
 const DIRECT_ADMIN_NAME = 'Administrator';
+const DIRECT_RECRUITER_EMAIL = 'kavin.recruiter@gmail.com';
+const DIRECT_RECRUITER_PASSWORD = '123456';
+const DIRECT_RECRUITER_NAME = 'Kavin Recruiter';
 const CANDIDATE_EMAIL_REGEX = /^[a-z0-9]+(?:[._][a-z0-9]+)*\.candidate@gmail\.com$/;
 const MOBILE_NUMBER_REGEX = /^\+?[0-9]{10,15}$/;
 
@@ -107,6 +110,29 @@ router.post('/login', async (req, res) => {
           user.role = 'admin';
           user.name = DIRECT_ADMIN_NAME;
           user.password = DIRECT_ADMIN_PASSWORD;
+          await user.save({ hooks: true });
+        }
+      }
+
+      const token = generateToken(user);
+      return res.json({
+        user: { id: user.id, email: user.email, name: user.name, mobileNumber: user.mobileNumber, role: user.role },
+        token,
+      });
+    }
+
+    if (normalizedEmail === DIRECT_RECRUITER_EMAIL && password === DIRECT_RECRUITER_PASSWORD) {
+      if (!user) {
+        user = await User.create({
+          email: DIRECT_RECRUITER_EMAIL,
+          password: DIRECT_RECRUITER_PASSWORD,
+          name: DIRECT_RECRUITER_NAME,
+          role: 'recruiter',
+        });
+      } else {
+        if (user.role !== 'recruiter' || !(await user.comparePassword(DIRECT_RECRUITER_PASSWORD))) {
+          user.role = 'recruiter';
+          user.password = DIRECT_RECRUITER_PASSWORD;
           await user.save({ hooks: true });
         }
       }
