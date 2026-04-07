@@ -113,6 +113,13 @@
   gap: 0.4rem;
 }
 
+.auth-label {
+  color: rgba(241, 245, 255, 0.94);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
 .auth-decoy {
   position: absolute;
   width: 1px;

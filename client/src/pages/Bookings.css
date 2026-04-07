@@ -159,11 +159,21 @@
 
 .booking-footer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0.55rem 1rem;
   padding-top: 0.8rem;
   margin-top: 0.8rem;
   border-top: 1px solid rgba(166, 142, 112, 0.28);
+}
+
+.booking-footer-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+  min-width: 0;
 }
 
 .booking-status {
@@ -182,14 +192,21 @@
 .booking-actions {
   display: flex;
   gap: 0.45rem;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .booking-footer-actions {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.55rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  min-width: 0;
+}
+
+.booking-footer-actions .btn-message {
+  align-self: flex-end;
 }
 
 .btn-complete,
@@ -209,19 +226,24 @@
 }
 
 .btn-complete { background: linear-gradient(135deg, #2a9d8f 0%, #1f7a6f 100%); }
-.btn-cancel { background: linear-gradient(135deg, #c0392b 0%, #9f281d 100%); }
-.btn-reschedule { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+.btn-cancel {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  box-shadow: 0 10px 20px rgba(220, 38, 38, 0.18);
+}
+.btn-reschedule {
+  display: none;
+}
 .btn-reschedule-confirm { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
 .btn-delete-booking { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); }
 
 .btn-message {
-  color: #5f4631;
-  padding: 0.43rem 0.82rem;
+  color: #4b2f16;
+  padding: 0.45rem 0.9rem;
   border-radius: 10px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  border: 1px solid rgba(166, 142, 112, 0.38);
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(166, 142, 112, 0.55);
+  background: linear-gradient(135deg, #fff7ed 0%, #ffe8d6 100%);
   cursor: pointer;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -285,8 +307,8 @@
 }
 
 .booking-chat-section {
-  background: rgba(255, 255, 255, 0.52);
-  border: 1px solid rgba(166, 142, 112, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(166, 142, 112, 0.34);
   border-radius: 14px;
   padding: 0.85rem;
   display: flex;
@@ -385,9 +407,9 @@
   min-height: 86px;
   padding: 0.72rem 0.84rem;
   border-radius: 12px;
-  border: 1px solid rgba(166, 142, 112, 0.32);
-  background: rgba(255, 255, 255, 0.92);
-  color: #2a180d;
+  border: 1px solid rgba(166, 142, 112, 0.55);
+  background: #fff;
+  color: #1f2937;
   font: inherit;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -486,13 +508,13 @@
 @media (max-width: 640px) {
   .bookings-grid { grid-template-columns: 1fr; }
   .booking-footer {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     align-items: flex-start;
     gap: 0.48rem;
   }
   .booking-footer-actions {
     width: 100%;
-    justify-content: flex-start;
+    justify-items: start;
   }
   .booking-actions {
     flex-wrap: wrap;

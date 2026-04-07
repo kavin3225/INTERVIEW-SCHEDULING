@@ -26,6 +26,7 @@ export default function Users() {
   const [updatingRequestId, setUpdatingRequestId] = useState(null);
   const [replyDrafts, setReplyDrafts] = useState({});
   const [replySendingId, setReplySendingId] = useState(null);
+  const [highlightedRequestId, setHighlightedRequestId] = useState(null);
 
   const loadUsers = useCallback(async () => {
     try {
@@ -163,12 +164,19 @@ export default function Users() {
       email: request.requestedEmail || '',
       password: request.requestedPassword || '',
     });
+    setHighlightedRequestId(request.id);
 
     const recoverySection = document.getElementById('candidate-recovery-form');
     if (recoverySection) {
       recoverySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
+
+  useEffect(() => {
+    if (!highlightedRequestId) return;
+    const timer = window.setTimeout(() => setHighlightedRequestId(null), 3000);
+    return () => window.clearTimeout(timer);
+  }, [highlightedRequestId]);
 
   const candidateUsers = users.filter((entry) => entry.role === 'candidate');
   const pendingRequests = recoveryRequests.filter((entry) => entry.status === 'pending');
@@ -220,7 +228,10 @@ export default function Users() {
         ) : (
           <div className="users-request-list">
             {pendingRequests.map((request) => (
-              <div key={request.id} className="users-request-card">
+              <div
+                key={request.id}
+                className={`users-request-card${highlightedRequestId === request.id ? ' highlighted' : ''}`}
+              >
                 <div className="users-request-head">
                   <div className="users-request-title-wrap">
                     <span className="users-request-sender">
@@ -279,7 +290,7 @@ export default function Users() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-update-access"
                     onClick={() => handlePrepareRecovery(request)}
                   >
                     Update access
@@ -299,7 +310,7 @@ export default function Users() {
         )}
       </div>
 
-      <div className="card users-actions-card" id="candidate-recovery-form">
+      <div className={`card users-actions-card${highlightedRequestId ? ' highlighted' : ''}`} id="candidate-recovery-form">
         <h3>{isRecruiter ? 'Recover Candidate Account' : 'Candidate Recovery'}</h3>
         <p className="users-help-text">
           Recruiters can update a candidate email, reset a temporary password, or both when the candidate loses access.
